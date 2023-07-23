@@ -18,6 +18,7 @@
                                     <th>Suptitle</th>
                                     <th>Title</th>
                                     <th>Description</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -31,7 +32,12 @@
                                         <td>@slider.Suptitle</td>
                                         <td>@slider.Title</td>
                                         <td>@slider.Description</td>
+                                        <td>
+                                            <a class="btn btn-primary" asp-action="Detail" asp-route-id="@slider.Id"> Detail </a>
+
+                                        </td>
                                     </tr>
+                                    
                                 }
 
                             

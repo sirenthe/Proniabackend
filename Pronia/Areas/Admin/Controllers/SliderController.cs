@@ -18,5 +18,10 @@ namespace Pronia.Areas.Admin.Controllers
             var sliders = _context.Sliders;
             return View(sliders);
         }
+        public IActionResult Detail(int id)
+        {
+
+            return View();
+        }
     }
 }
