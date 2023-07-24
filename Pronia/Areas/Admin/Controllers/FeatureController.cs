@@ -14,25 +14,16 @@ namespace Pronia.Areas.Admin.Controllers
         {
             _context = context;
         }
-        //public IActionResult Index()
-        //{
-        //    var features= _context.Features;
-        //    return View(features);
-        //}
-        //public IActionResult Detail(int id )
-        //{
-        //    return View();
-        //}
+
         public async Task<IActionResult> Index()
         {
             var features = await _context.Features.ToListAsync();
             return View(features);
         }
 
-
         public async Task<IActionResult> Detail(int id)
         {
-            Feature? feature = await _context.Features.FirstOrDefaultAsync(x => x.Id == id);
+            Feature feature = await _context.Features.FirstOrDefaultAsync(x => x.Id == id);
             if (feature is null)
             {
                 return NotFound();
@@ -48,10 +39,18 @@ namespace Pronia.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Feature feature)
         {
+            int featureCount = _context.Features.Count();
+            if (featureCount >= 3)
+            {
+              
+                return RedirectToAction(nameof(Index));
+            }
+
             if (!ModelState.IsValid)
             {
                 return View();
             }
+
             await _context.Features.AddAsync(feature);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -64,18 +63,23 @@ namespace Pronia.Areas.Admin.Controllers
                 return NotFound();
             return View(feature);
         }
+
         [HttpPost]
         [ActionName("Delete")]
-        public async Task<IActionResult> DeleteSlider(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var feature = await _context.Features.FirstOrDefaultAsync(x => x.Id == id);
             if (feature is null)
                 return NotFound();
+            int featureCount = _context.Features.Count();
+            if (featureCount <= 1)
+            {
+
+                return RedirectToAction(nameof(Index));
+            }
             _context.Features.Remove(feature);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
     }
 }
-
-   
