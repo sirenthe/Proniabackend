@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "Delete";
+}
+
+
+@model Feature
+<div class="content-wrapper">
+    <div class="row">
+        <div>
+            <img src="~/assets/images/website-images//@Model.Image" style="max-width:25%"
+                 alt="Inner Image" />
+            <h4>Title:@Model.Title</h4>
+         
+            <h4>Description:@Model.Description</h4>
+        </div>
+        <div>
+            <div style="display: flex; margin-left: 20px;">
+                <form method="post">
+                    <button class="btn btn-danger" type="submit">delete</button>
+                </form>
+                <a class="btn btn-primary" asp-action="Index">go back</a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
