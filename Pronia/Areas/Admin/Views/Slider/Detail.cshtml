@@ -1,0 +1,22 @@
+﻿@using Pronia.Models
+@{
+    ViewData["Title"] = "Detail";
+}
+
+@model Slider
+<div class="content-wrapper">
+    <div class="row">
+        <div>
+            <img src="~/assets/images/website-images//@Model.Image"style="max-width:25%"
+                 alt="Inner Image" />
+                 <h4>Title:@Model.Title</h4>
+            <h4>SupTitle:@Model.Suptitle</h4>
+            <h4>Description:@Model.Description</h4>
+        </div>
+        <div>
+            <a class="btn btn-primary " asp-action ="Index">go back </a>
+</div>
+        </div> 
+
+        </div>
+
