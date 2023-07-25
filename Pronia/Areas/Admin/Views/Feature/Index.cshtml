@@ -3,7 +3,7 @@
     ViewData["Title"] = "Feature";
 }
 
-@model IEnumerable<Feature>
+@model List<Feature>
 <div class="content-wrapper">
     <div class="row">
         <div class="col-lg-12 grid-margin stretch-card">
@@ -12,7 +12,11 @@
                     <h4 class="card-title">Features</h4>
 
                     <div class="table-responsive">
-                        <a asp-action="Create" class="btn btn-primary">Create</a>
+                        @if (Model.Count < 3)
+                        {
+                            <a asp-action="Create" class="btn btn-primary">Create</a>
+                        }
+                    
                         <table class="table">
                             <thead>
                                 <tr>
@@ -44,7 +48,7 @@
                                         </td>
 
                                         <td>
-                                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@feature.Id"> Delete </a>
+                                            <a class="btn btn-danger @(Model.Count==1 ?"disabled":" ")" asp-action="Delete" asp-route-id="@feature.Id"> Delete </a>
                                         </td>
                                     </tr>
 

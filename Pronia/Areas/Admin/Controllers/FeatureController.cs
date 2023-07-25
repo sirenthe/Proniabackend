@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Pronia.Areas.Admin.ViewModels.FeatureViewModels;
 using Pronia.Contexts;
 using Pronia.Models;
 
@@ -17,7 +18,8 @@ namespace Pronia.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var features = await _context.Features.ToListAsync();
+
+            var features = await _context.Features.Where(f=> f.IsDeleted==false).ToListAsync();
             return View(features);
         }
 
@@ -37,19 +39,27 @@ namespace Pronia.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Feature feature)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateFeatureViewModel createFeatureViewModel)
         {
+            
             int featureCount = _context.Features.Count();
             if (featureCount >= 3)
             {
-              
-                return RedirectToAction(nameof(Index));
+                return BadRequest();
             }
 
             if (!ModelState.IsValid)
             {
                 return View();
             }
+            Feature feature = new Feature
+            {
+                Title = createFeatureViewModel.Title,
+                Description = createFeatureViewModel.Description,
+                Image = createFeatureViewModel.Image,
+
+            };
 
             await _context.Features.AddAsync(feature);
             await _context.SaveChangesAsync();
@@ -80,6 +90,19 @@ namespace Pronia.Areas.Admin.Controllers
             _context.Features.Remove(feature);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> Update(int id)
+        {
+           var feature= await _context.Features.FirstOrDefaultAsync(f => f.Id == id && !f.IsDeleted);
+            if(feature is null) return NotFound();
+            UpdateFeatureViewModel updateFeatureViewModel = new UpdateFeatureViewModel
+            {
+                Image = feature.Image,
+                id = feature.Id,
+                Description = feature.Description,
+                Title = feature.Title,
+            };
+            return View(updateFeatureViewModel);
         }
     }
 }
