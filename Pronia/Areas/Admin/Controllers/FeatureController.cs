@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Pronia.Areas.Admin.ViewModels.FeatureViewModels;
 using Pronia.Contexts;
 using Pronia.Models;
+using Pronia.Utils;
 
 namespace Pronia.Areas.Admin.Controllers
 {
@@ -10,11 +11,15 @@ namespace Pronia.Areas.Admin.Controllers
     public class FeatureController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public FeatureController(AppDbContext context)
+
+        public FeatureController(AppDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
+     
         //INDEX
         public async Task<IActionResult> Index()
         {
@@ -42,9 +47,7 @@ namespace Pronia.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateFeatureViewModel createFeatureViewModel)
         {
-            //    return Content(createFeatureViewModel.Image.FileName);
-            //return Content(createFeatureViewModel.Image.ContentType);
-            //return Content(createFeatureViewModel.Image.Length.ToString());
+        
             if (await _context.Features.CountAsync() == 3)
             {
                 return BadRequest();
@@ -54,20 +57,30 @@ namespace Pronia.Areas.Admin.Controllers
             {
                 return View();
             }
-            string path = "C:\\Users\\Windows\\Desktop\\Task\\Pronia\\Pronia\\wwwroot\\assets\\images\\website-images\\" + createFeatureViewModel.Image.FileName;
+            if (!createFeatureViewModel.Image.CheckFileType("image/"))
+            {
+                ModelState.AddModelError("Image", "sekil deyil");
+                return View();
+            }
+
+
+        string filename=$"{Guid.NewGuid()}-{createFeatureViewModel.Image.FileName}";
+           
+            string path = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images",
+                filename);
             using (FileStream fileStream = new FileStream(path, FileMode.Create))
             {
                 await createFeatureViewModel.Image.CopyToAsync(fileStream);
             }
              
-            //fileStream.Dispose();
+    
 
 
             Feature feature = new Feature
             {
                 Title = createFeatureViewModel.Title,
                 Description = createFeatureViewModel.Description,
-                Image = createFeatureViewModel.Image.FileName,
+                Image = filename,
 
 
             };
@@ -162,6 +175,13 @@ if(await query.CountAsync()==1)
             {
                 return NotFound();
             }
+            string path = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images",
+               feature.Image);
+            if(System.IO.File.Exists(path)) { 
+                System.IO.File.Delete(path);
+            }
+
+
             feature.IsDeleted = true;
           await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
