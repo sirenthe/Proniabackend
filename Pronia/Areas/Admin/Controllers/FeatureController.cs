@@ -103,6 +103,8 @@ namespace Pronia.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+
             UpdateFeatureViewModel updateFeatureViewModel = new UpdateFeatureViewModel
             {
                 Title = feature.Title,
@@ -114,25 +116,77 @@ namespace Pronia.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update (int id, UpdateFeatureViewModel updateFeatureViewModel)
+        //public async Task<IActionResult> Update (int id, UpdateFeatureViewModel updateFeatureViewModel)
+        //{
+        //    if(!ModelState.IsValid)
+        //    {
+        //        return View();
+        //    }
+
+        //    var feature = await _context.Features.FirstOrDefaultAsync(f=>f.Id== id);
+        //    if(feature == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    feature.Title = updateFeatureViewModel.Title;
+        //    feature.Image = updateFeatureViewModel.Image;
+        //    feature.Description = updateFeatureViewModel.Description;
+        //    _context.Features.Update(feature);
+        //    await _context.SaveChangesAsync();
+
+
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+
+
+        [HttpPost]
+
+
+        public async Task<IActionResult> Update(int id, UpdateFeatureViewModel updateFeatureViewModel)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View();
             }
 
-            var feature = await _context.Features.FirstOrDefaultAsync(f=>f.Id== id);
-            if(feature == null)
+            var feature = await _context.Features.FirstOrDefaultAsync(f => f.Id == id);
+            if (feature == null)
             {
                 return NotFound();
             }
+
+         
+            if (updateFeatureViewModel.Image != null && updateFeatureViewModel.Image.Length > 0)
+            {
+                // Delete the old file if it exists
+                if (!string.IsNullOrEmpty(feature.Image))
+                {
+                    string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images", feature.Image);
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                // Save the new file
+                string filename = $"{Guid.NewGuid()}-{Path.GetFileName(updateFeatureViewModel.Image.FileName)}";
+                string path = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images", filename);
+                using (FileStream fileStream = new FileStream(path, FileMode.Create))
+                {
+                    await updateFeatureViewModel.Image.CopyToAsync(fileStream);
+                }
+
+                feature.Image = filename;
+            }
+
+            // Update other properties
             feature.Title = updateFeatureViewModel.Title;
-            feature.Image = updateFeatureViewModel.Image;
             feature.Description = updateFeatureViewModel.Description;
+
             _context.Features.Update(feature);
             await _context.SaveChangesAsync();
 
-      
             return RedirectToAction(nameof(Index));
         }
 
@@ -143,8 +197,9 @@ namespace Pronia.Areas.Admin.Controllers
 
 
 
+
         //DELETE
-public async  Task<IActionResult> delete (int id)
+        public async  Task<IActionResult> delete (int id)
         {
             IQueryable<Feature> query =_context.Features.AsQueryable();
 if(await query.CountAsync()==1)
