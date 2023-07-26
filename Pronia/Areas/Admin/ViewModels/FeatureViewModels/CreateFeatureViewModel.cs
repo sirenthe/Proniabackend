@@ -1,11 +1,15 @@
-﻿namespace Pronia.Areas.Admin.ViewModels.FeatureViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Pronia.Areas.Admin.ViewModels.FeatureViewModels
 {
     public class CreateFeatureViewModel
     {
-        public string Image { get; set; }
         public string Title { get; set; }
-        public string Description { get; set; }
+        [System.ComponentModel.DataAnnotations.Required]
+        public IFormFile Image { get; set; }
+        [MaxLength(100)]
 
+        public string Description { get; set; }
 
 
     }
