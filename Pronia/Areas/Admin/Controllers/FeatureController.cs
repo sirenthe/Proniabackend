@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Drawing.Text;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pronia.Areas.Admin.ViewModels.FeatureViewModels;
 using Pronia.Contexts;
+using Pronia.Exceptions;
 using Pronia.Models;
+using Pronia.Services.Interfaces;
 using Pronia.Utils;
 
 namespace Pronia.Areas.Admin.Controllers
@@ -12,9 +15,12 @@ namespace Pronia.Areas.Admin.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileService _fileService;
 
 
-        public FeatureController(AppDbContext context, IWebHostEnvironment webHostEnvironment)
+
+       public FeatureController(AppDbContext context, IWebHostEnvironment webHostEnvironment,
+           IFileService fileService)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
@@ -47,7 +53,7 @@ namespace Pronia.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateFeatureViewModel createFeatureViewModel)
         {
-        
+
             if (await _context.Features.CountAsync() == 3)
             {
                 return BadRequest();
@@ -57,23 +63,35 @@ namespace Pronia.Areas.Admin.Controllers
             {
                 return View();
             }
-            if (!createFeatureViewModel.Image.CheckFileType("image/"))
+            //if (!createFeatureViewModel.Image.CheckFileType("image/"))
+            //{
+            //    ModelState.AddModelError("Image", "sekil deyil");
+            //    return View();
+            //}
+
+
+            //string filename=$"{Guid.NewGuid()}-{createFeatureViewModel.Image.FileName}";
+
+            //    string path = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images",
+            //        filename);
+            //    using (FileStream fileStream = new FileStream(path, FileMode.Create))
+            //    {
+            //        await createFeatureViewModel.Image.CopyToAsync(fileStream);
+            //    }
+
+            string filename=string.Empty;
+            try
             {
-                ModelState.AddModelError("Image", "sekil deyil");
+                 filename = await _fileService.CreateFileAsync(createFeatureViewModel.Image, Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images",
+                               "website-images"));
+          
+            }
+            catch (FileTypeException ex)
+            {
+                ModelState.AddModelError("Image", ex.Message);
                 return View();
             }
 
-
-        string filename=$"{Guid.NewGuid()}-{createFeatureViewModel.Image.FileName}";
-           
-            string path = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images",
-                filename);
-            using (FileStream fileStream = new FileStream(path, FileMode.Create))
-            {
-                await createFeatureViewModel.Image.CopyToAsync(fileStream);
-            }
-             
-    
 
 
             Feature feature = new Feature
@@ -90,111 +108,96 @@ namespace Pronia.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //private async Task<string> CreateFileAsync(IFormFile image, string path)
+        //{
+        //    string filename = $"{Guid.NewGuid()}-{image.FileName}";
+        //    string resultPath = Path.Combine(path, filename);
+        //    using (FileStream fileStream = new FileStream(resultPath, FileMode.Create))
+        //    {
+        //        await image.CopyToAsync(fileStream);
+        //    }
+        //    return filename;
+        //}
 
 
-   //UPDATE UPDATE
-        public async Task<IActionResult> Update(int id)  {
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
-            var feature = await _context.Features.FirstOrDefaultAsync(f=> f.Id == id);
-            if(feature == null)
+        public async Task<IActionResult> Update(int Id)
+        {
+            var feature = await _context.Features.SingleOrDefaultAsync(x => x.Id == Id);
+            if(feature is null)
             {
                 return NotFound();
             }
-
 
             UpdateFeatureViewModel updateFeatureViewModel = new UpdateFeatureViewModel
             {
                 Title = feature.Title,
                 Description = feature.Description,
-                Image = feature.Image,
+
                 Id = feature.Id
             };
             return View(updateFeatureViewModel);
         }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Update (int id, UpdateFeatureViewModel updateFeatureViewModel)
-        //{
-        //    if(!ModelState.IsValid)
-        //    {
-        //        return View();
-        //    }
 
-        //    var feature = await _context.Features.FirstOrDefaultAsync(f=>f.Id== id);
-        //    if(feature == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    feature.Title = updateFeatureViewModel.Title;
-        //    feature.Image = updateFeatureViewModel.Image;
-        //    feature.Description = updateFeatureViewModel.Description;
-        //    _context.Features.Update(feature);
-        //    await _context.SaveChangesAsync();
-
-
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-
-
-        [HttpPost]
-
-
-        public async Task<IActionResult> Update(int id, UpdateFeatureViewModel updateFeatureViewModel)
+        public async Task<IActionResult> Update(int Id, UpdateFeatureViewModel updateFeatureViewModel)
         {
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return View();
             }
-
-            var feature = await _context.Features.FirstOrDefaultAsync(f => f.Id == id);
-            if (feature == null)
+             var feature = await _context.Features.FirstOrDefaultAsync(x => x.Id == Id); 
+            if(feature is null)
             {
                 return NotFound();
             }
-
-         
-            if (updateFeatureViewModel.Image != null && updateFeatureViewModel.Image.Length > 0)
+            if(updateFeatureViewModel.Image!= null)
             {
-                // Delete the old file if it exists
-                if (!string.IsNullOrEmpty(feature.Image))
-                {
-                    string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images", feature.Image);
-                    if (System.IO.File.Exists(oldImagePath))
-                    {
-                        System.IO.File.Delete(oldImagePath);
-                    }
-                }
+                //if (!updateFeatureViewModel.Image.CheckFileType("image/"))
+                //{
+                //    ModelState.AddModelError("Image", "sekil deyil");
+                //    return View();
+                //    }
+                    string path = Path.Combine(_webHostEnvironment.WebRootPath,
+          "assets", "images", "website-images", feature.Image);
 
-                // Save the new file
-                string filename = $"{Guid.NewGuid()}-{Path.GetFileName(updateFeatureViewModel.Image.FileName)}";
-                string path = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images", filename);
-                using (FileStream fileStream = new FileStream(path, FileMode.Create))
+                //if (System.IO.File.Exists(path))
+                //{
+                //    System.IO.File.Delete(path);
+                //}
+           _fileService.DeleteFile(path);
+                //string fileName = $"{Guid.NewGuid()}-{updateFeatureViewModel.Image.FileName}";
+                //string newPath = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images", fileName);
+                //using (FileStream stream = new FileStream(newPath, FileMode.Create))
+                //{
+                //    await updateFeatureViewModel.Image.CopyToAsync(stream);
+                //}
+                try
                 {
-                    await updateFeatureViewModel.Image.CopyToAsync(fileStream);
+                    string filename = await _fileService.CreateFileAsync(updateFeatureViewModel.Image, Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images",
+                                   "website-images"));
+                    feature.Image = filename;
                 }
+                catch(FileTypeException ex)
+                {
+                    ModelState.AddModelError("Image", ex.Message);
+                    return View();
+                }
+            
 
-                feature.Image = filename;
+               
             }
 
-            // Update other properties
             feature.Title = updateFeatureViewModel.Title;
             feature.Description = updateFeatureViewModel.Description;
-
+       
+            feature.Id = updateFeatureViewModel.Id;
             _context.Features.Update(feature);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
-
-
-
-
-
-
 
 
 
@@ -232,9 +235,12 @@ if(await query.CountAsync()==1)
             }
             string path = Path.Combine(_webHostEnvironment.WebRootPath, "assets", "images", "website-images",
                feature.Image);
-            if(System.IO.File.Exists(path)) { 
-                System.IO.File.Delete(path);
-            }
+            //if (System.IO.File.Exists(path))
+            //{
+            //    System.IO.File.Delete(path);
+            //}
+            //Deleteasync(path);
+            _fileService.DeleteFile(path);
 
 
             feature.IsDeleted = true;
@@ -242,6 +248,15 @@ if(await query.CountAsync()==1)
             return RedirectToAction(nameof(Index));
         }
 
+
+        //private void Deleteasync(string path)
+        //{
+        //    if (System.IO.File.Exists(path))
+        //    {
+        //        System.IO.File.Delete(path);
+        //    }
+
+        //}
 
 
 
@@ -257,9 +272,21 @@ if(await query.CountAsync()==1)
         }
     }
 
+
+   
+
 }
 
 
 
 
 //IgnoreQueryFilters() ile ise bu hasfilteri ignore edirik 
+
+
+
+
+
+
+
+
+

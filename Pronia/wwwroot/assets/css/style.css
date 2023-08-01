@@ -733,7 +733,7 @@ img {
 }
 
 .countdown-wrap.with-dark-border .countdown__time:before {
-  content: url("../ src="~/assets//shape/2.png");
+  content: url("../images/shape/2.png");
 }
 
 .countdown-wrap.with-secondary-border .countdown__item {
@@ -745,7 +745,7 @@ img {
 }
 
 .countdown-wrap.with-secondary-border .countdown__time:before {
-  content: url("../ src="~/assets//shape/2.png");
+  content: url("../images/shape/2.png");
 }
 
 .countdown__item {
@@ -780,7 +780,7 @@ img {
 }
 
 .countdown__time:before {
-  content: url("../ src="~/assets//shape/1.png");
+  content: url("../images/shape/1.png");
   position: absolute;
   bottom: -15px;
   left: 50%;
@@ -1117,7 +1117,7 @@ blockquote {
 }
 
 blockquote:before {
-  content: url("../ src="~/assets//blog/blockquote/quotation.png");
+  content: url("../images/blog/blockquote/quotation.png");
   -webkit-transform: translate(-50%, -50%);
       -ms-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
@@ -2937,7 +2937,7 @@ blockquote p {
 }
 
 .modal-bg-dark .btn-close {
-  background-image: url("../ src="~/assets//offcanvas/close-white.svg");
+  background-image: url("../images/offcanvas/close-white.svg");
 }
 
 .modal-header {
@@ -3304,7 +3304,7 @@ blockquote p {
 }
 
 .shipping-style-2 .shipping-item {
-  background-image: url("../ src="~/assets//shipping/shape/1.png");
+  background-image: url("../images/shipping/shape/1.png");
   background-position: top;
   background-repeat: no-repeat;
   background-size: auto;
@@ -4965,7 +4965,7 @@ blockquote p {
 }
 
 .testimonial-item:before {
-  content: url(../ src="~/assets//testimonial/icon/quotation.png);
+  content: url(../images/testimonial/icon/quotation.png);
   border-bottom-left-radius: 100%;
   background-color: #abd373;
   position: absolute;
@@ -5109,7 +5109,7 @@ blockquote p {
 }
 
 .about-title span:before {
-  content: url("../ src="~/assets//about/icon/1.png");
+  content: url("../images/about/icon/1.png");
   position: absolute;
   bottom: -40px;
   right: 0;
