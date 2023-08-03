@@ -9,7 +9,9 @@ namespace Pronia.Mappers
         public  ProductMapperProfile()
             {
             CreateMap<CreateProductViewModel, Product>();
-          
+          CreateMap<Product,UpdateProductViewModel >().ForMember(pwm=>pwm.Image,x=>x.Ignore())
+                .ReverseMap();
+            
         }
 
             

@@ -24,6 +24,7 @@ namespace Pronia.Areas.Admin.Controllers
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _fileService= fileService;
         }
      
         //INDEX

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "U/s+gTUo3/iLHGrB3Mn7MpgjeKRedip5IB6brXF//uQ=",
+  "Hash": "kEnbQKzWfpJItV0XMKtWKpbUUWJ8EkFeK5cnuRMkouM=",
   "Source": "Pronia",
   "BasePath": "_content/Pronia",
   "Mode": "Default",
@@ -1615,6 +1615,23 @@
       "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\7855b959-e107-4f49-b127-278194b80625-WIN_20230629_16_47_48_Pro.jpg"
     },
     {
+      "Identity": "C:\\Users\\Windows\\Desktop\\Task\\Pronia\\Pronia\\wwwroot\\assets\\images\\website-images\\78f79c9c-fc06-4e9e-acb9-a3c9f2e06e91-img104.jpg",
+      "SourceId": "Pronia",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Windows\\Desktop\\Task\\Pronia\\Pronia\\wwwroot\\",
+      "BasePath": "_content/Pronia",
+      "RelativePath": "assets/images/website-images/78f79c9c-fc06-4e9e-acb9-a3c9f2e06e91-img104.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\78f79c9c-fc06-4e9e-acb9-a3c9f2e06e91-img104.jpg"
+    },
+    {
       "Identity": "C:\\Users\\Windows\\Desktop\\Task\\Pronia\\Pronia\\wwwroot\\assets\\images\\website-images\\83e9072e-207b-4741-b241-e124342248bf-img104.jpg",
       "SourceId": "Pronia",
       "SourceType": "Discovered",
@@ -1681,6 +1698,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\ab44834c-0d52-4dad-968e-256f148055c6-img104.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Windows\\Desktop\\Task\\Pronia\\Pronia\\wwwroot\\assets\\images\\website-images\\c67cbe9f-ab3f-4671-a18c-8bfb997eebde-img29.jpg",
+      "SourceId": "Pronia",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Windows\\Desktop\\Task\\Pronia\\Pronia\\wwwroot\\",
+      "BasePath": "_content/Pronia",
+      "RelativePath": "assets/images/website-images/c67cbe9f-ab3f-4671-a18c-8bfb997eebde-img29.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\c67cbe9f-ab3f-4671-a18c-8bfb997eebde-img29.jpg"
     },
     {
       "Identity": "C:\\Users\\Windows\\Desktop\\Task\\Pronia\\Pronia\\wwwroot\\assets\\images\\website-images\\d5f96526-e291-45d9-9fc6-faebcbe3c4ca-WIN_20230629_16_47_48_Pro.jpg",
