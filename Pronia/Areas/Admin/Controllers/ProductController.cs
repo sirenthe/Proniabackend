@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +12,10 @@ using Pronia.Models;
 using Pronia.Services.Interfaces;
 using Pronia.Utils;
 
-namespace Pronia.Areas.Admin
+namespace Pronia.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly AppDbContext _context;
@@ -31,6 +33,7 @@ namespace Pronia.Areas.Admin
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var products = await _context.Products.AsNoTracking().ToListAsync();
@@ -109,41 +112,41 @@ namespace Pronia.Areas.Admin
             return View(productDetailViewModel);
         }
 
-        public async Task <IActionResult> Update(int id )
+        public async Task<IActionResult> Update(int id)
         {
-            var product =await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if(product is null) return NotFound();
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (product is null) return NotFound();
             ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
 
-            var updateProductViewModel= _mapper.Map<UpdateProductViewModel>(product);
+            var updateProductViewModel = _mapper.Map<UpdateProductViewModel>(product);
             return View(updateProductViewModel);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public async Task<IActionResult> Update(int id , UpdateProductViewModel updateProductViewModel)
+        public async Task<IActionResult> Update(int id, UpdateProductViewModel updateProductViewModel)
         {
             ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
-               if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View();
             }
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if(product is null) return NotFound();
+            if (product is null) return NotFound();
             string filename = product.Image;
-            if(updateProductViewModel.Image is not null)
+            if (updateProductViewModel.Image is not null)
             {
                 try
                 {
                     string path = Path.Combine(_webHostEnvironment.WebRootPath, "assets",
                         "images", "website-images");
                     _fileService.DeleteFile(Path.Combine(path, product.Image));
-                  filename= await _fileService.CreateFileAsync(updateProductViewModel.Image, path);
+                    filename = await _fileService.CreateFileAsync(updateProductViewModel.Image, path);
                 }
-                catch(FileTypeException ex)
+                catch (FileTypeException ex)
                 {
                     ModelState.AddModelError("Image", ex.Message);
-                        return View();  
+                    return View();
                 }
 
             }

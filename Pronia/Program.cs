@@ -25,9 +25,9 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequiredLength = 8;
     options.User.RequireUniqueEmail = true;
-    options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.MaxFailedAccessAttempts = 3;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
+    options.Lockout.AllowedForNewUsers = false;
 })
 .AddEntityFrameworkStores<AppDbContext>();
 
@@ -35,9 +35,16 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.ConfigureApplicationCookie(c =>
+{
+    c.LoginPath = "/Auth/Login";
+});
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 app.UseStaticFiles();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
          name: "areas",

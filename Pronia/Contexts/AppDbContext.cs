@@ -8,8 +8,10 @@ namespace Pronia.Contexts
 {
 	public class AppDbContext : IdentityDbContext<AppUser>
 	{
-		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+		private readonly IHttpContextAccessor _contextAccessor;
+		public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor contextAccessor) : base(options)
 		{
+			_contextAccessor = contextAccessor;
 		}
 
 		public DbSet<Slider> Sliders { get; set; }
@@ -28,6 +30,8 @@ namespace Pronia.Contexts
 		}
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
+			string? name = _contextAccessor.HttpContext.User.Identity.IsAuthenticated ?
+				_contextAccessor.HttpContext.User.Identity.Name : "Admin";
 		var entries=ChangeTracker.Entries<BaseSectionEntity>();
 			foreach (var entry in entries)
 			{
@@ -35,13 +39,13 @@ namespace Pronia.Contexts
 				{ 
 						case EntityState.Added:
                         entry.Entity.CreatedDate = DateTime.UtcNow;
-                        entry.Entity.CreatedBy = "Admin";
+                        entry.Entity.CreatedBy = name;
                         entry.Entity.UpdatedDate = DateTime.UtcNow;
-                        entry.Entity.UpdatedBy = "Admin";
+						entry.Entity.UpdatedBy = name;
                         break;
 						case EntityState.Modified:
                         entry.Entity.UpdatedDate = DateTime.UtcNow;
-                        entry.Entity.UpdatedBy = "Admin";
+						entry.Entity.UpdatedBy = name;
                         break;
 						default: break;
 

@@ -35,18 +35,18 @@ namespace Pronia.Controllers
 
           IdentityResult identityResult= 
                 await _userManager.CreateAsync(newuser, registerViewModel.Password);
-            if (identityResult.Succeeded)
+            if (!identityResult.Succeeded)
             {
                 foreach(var error in identityResult.Errors) {
                     ModelState.AddModelError("", error.Description);
                 }
                 return View();
             }
+         
 
 
 
-
-            return Ok("ugurla qeydiyatdan kecdi");
+return RedirectToAction("Login" ,"Auth" );
 
 
         }
